@@ -7,17 +7,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.beans.Transient;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @SpringBootTest
-public class AutorRepositoryTest
+class AutorRepositoryTest
 {
     @Autowired
     AutorRepository autorRepository;
 
 
     @Test
-    public void saveTest()
+    void saveTest()
     {
         Autor autor = new Autor();
 
@@ -35,7 +36,7 @@ public class AutorRepositoryTest
 
     @Test
     @Transient
-    public void updateTest()
+    void updateTest()
     {
         var id = UUID.fromString("1dfd86d7-e5e3-45e6-aced-49a4d69ecd33");
 
@@ -48,6 +49,32 @@ public class AutorRepositoryTest
             novoAutor.setDataNascimento(LocalDate.of(1960, 2, 17));
 
             autorRepository.save(novoAutor);
+        }
+    }
+
+    @Test
+    void listTest()
+    {
+        List<Autor> listaAutor = autorRepository.findAll();
+
+        listaAutor.forEach(System.out::println);
+    }
+
+    @Test
+    void countTest()
+    {
+        System.out.println("Contagem de autores: " + autorRepository.count());
+    }
+
+    @Test
+    void deleteById()
+    {
+        var id = UUID.fromString("1dfd86d7-e5e3-45e6-aced-49a4d69ecd33");
+
+        if(autorRepository.findById(id).isPresent())
+        {
+            var jose = autorRepository.findById(id).get();
+            autorRepository.delete(jose);
         }
     }
 }
