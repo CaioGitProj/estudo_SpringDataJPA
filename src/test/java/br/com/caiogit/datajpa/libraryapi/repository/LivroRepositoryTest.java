@@ -10,7 +10,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
+import org.springframework.transaction.annotation.Transactional;
 
 
 @SpringBootTest
@@ -63,5 +63,47 @@ class LivroRepositoryTest
         livro.setAutor(autor);
 
         livroRepository.save(livro);
+    }
+
+
+
+    @Test
+    void updateTest()
+    {
+        var livroSalvo = livroRepository.findById(UUID.fromString("3d19a42e-ff04-40e3-b0fc-58a0c36fe5a9"))
+                .orElseThrow(() -> new IllegalArgumentException("Não existe um livro com esse Id"));
+
+
+        UUID idAutorLivro = UUID.fromString("57ac8ed2-dc4c-4fa8-a373-e93ebec75036");
+
+        var novoAutorLivro = autorRepository.findById(idAutorLivro)
+                .orElseThrow(()-> new IllegalArgumentException("Não existe um autor com esse id"));
+
+
+        livroSalvo.setAutor(novoAutorLivro);
+
+        livroRepository.save(livroSalvo);
+    }
+
+    @Test
+    void deleteTest()
+    {
+        UUID livroParaDeletar = UUID.fromString("3d19a42e-ff04-40e3-b0fc-58a0c36fe5a9");
+
+        livroRepository.deleteById(livroParaDeletar);
+    }
+
+    @Test
+    //Abre uma janela no banco para buscar coisas fora da tabela(padrão para lazy, estratégia fetch(ver classe Livro))
+    @Transactional
+    void findTest()
+    {
+        var livroBusca = livroRepository.findById
+                (UUID.fromString("fa2be9eb-f4aa-4473-9410-0b1a3a63e9ba"))
+                .orElseThrow(() -> new IllegalArgumentException("Livro não encontrado"));
+
+
+        System.out.println("Livro: " + livroBusca.getTitulo());
+        System.out.println("Autor: " + livroBusca.getAutor().getNome());
     }
 }
