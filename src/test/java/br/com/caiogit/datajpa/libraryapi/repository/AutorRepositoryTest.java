@@ -1,12 +1,16 @@
 package br.com.caiogit.datajpa.libraryapi.repository;
 
+import br.com.caiogit.datajpa.libraryapi.enums.GeneroLivro;
 import br.com.caiogit.datajpa.libraryapi.model.Autor;
+import br.com.caiogit.datajpa.libraryapi.model.Livro;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.beans.Transient;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,6 +19,9 @@ class AutorRepositoryTest
 {
     @Autowired
     AutorRepository autorRepository;
+
+    @Autowired
+    LivroRepository livroRepository;
 
 
     @Test
@@ -76,5 +83,38 @@ class AutorRepositoryTest
             var jose = autorRepository.findById(id).get();
             autorRepository.delete(jose);
         }
+    }
+
+    @Test
+    void saveAutorWithLivroTest()
+    {
+        Livro livro = new Livro();
+        Livro livro2 = new Livro();
+
+        Autor autor = new Autor();
+        autor.setNome("Cézar");
+        autor.setNacionalidade("Marroquino");
+        autor.setDataNascimento(LocalDate.of(2005, 4, 15));
+
+        livro.setGeneroLivro(GeneroLivro.BIOGRAFIA);
+        livro.setIsbn("94567-810967");
+        livro.setPreco(BigDecimal.valueOf(39.99));
+        livro.setTitulo("Minha histoinra como cidadeum do Marrocos");
+        livro.setDataPublicacao(LocalDate.of(2020,3,2));
+        livro.setAutor(autor);
+
+        livro2.setGeneroLivro(GeneroLivro.CIENCIA);
+        livro2.setIsbn("18560-12856");
+        livro2.setPreco(BigDecimal.valueOf(10.20));
+        livro2.setTitulo("Toma no cu corona");
+        livro2.setDataPublicacao(LocalDate.of(2021,1,1));
+        livro2.setAutor(autor);
+
+
+        autor.setLivros(new ArrayList<>());
+        autor.getLivros().add(livro);
+        autor.getLivros().add(livro2);
+
+        autorRepository.save(autor);
     }
 }
