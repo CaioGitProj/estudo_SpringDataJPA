@@ -5,6 +5,7 @@ import br.com.caiogit.datajpa.libraryapi.model.Autor;
 import br.com.caiogit.datajpa.libraryapi.model.Livro;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -105,5 +106,58 @@ class LivroRepositoryTest
 
         System.out.println("Livro: " + livroBusca.getTitulo());
         System.out.println("Autor: " + livroBusca.getAutor().getNome());
+    }
+
+    @Test
+    void findTituloTest()
+    {
+        List<Livro> listaLivro = livroRepository.findByTitulo("Roubo na casa Assombrada");
+
+        listaLivro.forEach(System.out::println);
+    }
+
+    @Test
+    void findPrecoGreaterThan()
+    {
+        var preco = BigDecimal.valueOf(35.99);
+
+        List<Livro> listaLivro = livroRepository.findByPrecoGreaterThan(preco);
+        listaLivro.forEach(System.out::println);
+    }
+
+    @Test
+    void findByAutorAndTitulo()
+    {
+        var autorLivro = autorRepository.findById(UUID.fromString("fc575bc4-a1d3-40cf-b120-4512607de86e"))
+                .orElseThrow(()-> new IllegalArgumentException("esse autor não existe"));
+
+        Livro livro = livroRepository
+                .findByAutorAndTitulo(autorLivro, "Roubo na casa Assombrada");
+
+        System.out.println("Livro da minha pesquisa: " + livro);
+    }
+
+    @Test
+    void findByTituloContainingIgnoreCase()
+    {
+        var livro = livroRepository.findByTituloContainingIgnoreCase("casa");
+
+        livro.forEach(System.out::println);
+    }
+
+    @Test
+    void listEveryoneByTituloAndPreco()
+    {
+        var livros = livroRepository.listEveryoneByTituloAndPreco();
+
+        livros.forEach(System.out::println);
+    }
+
+    @Test
+    void findAutorOfLivros()
+    {
+        var autores = livroRepository.findAutorOfLivros();
+
+        autores.forEach(System.out::println);
     }
 }
