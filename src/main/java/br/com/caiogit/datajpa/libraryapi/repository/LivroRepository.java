@@ -1,9 +1,11 @@
 package br.com.caiogit.datajpa.libraryapi.repository;
 
+import br.com.caiogit.datajpa.libraryapi.enums.GeneroLivro;
 import br.com.caiogit.datajpa.libraryapi.model.Autor;
 import br.com.caiogit.datajpa.libraryapi.model.Livro;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -38,10 +40,15 @@ public interface LivroRepository extends JpaRepository<Livro, UUID> {
     List<Autor> findAutorOfLivros();
 
     @Query("""
-            select l.genero
+            select l.generoLivro
             from Livro l
             join l.autor a
             where a.nacionalidade = 'Brasileira'
             """)
     List<String> listGeneroByAutor();
+
+
+    //Usando os parâmetros dos métodos dentro das consultas
+    @Query(" select l from Livro l where l.generoLivro = :genero order by :paramOrdenacao")
+    List<Livro> findByGenero(@Param("genero") GeneroLivro genero, @Param("paramOrdenacao") String nomePropriedade);
 }
