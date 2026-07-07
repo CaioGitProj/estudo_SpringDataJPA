@@ -117,7 +117,7 @@ class LivroRepositoryTest
     }
 
     @Test
-    void findPrecoGreaterThan()
+    void findPrecoGreaterThanTest()
     {
         var preco = BigDecimal.valueOf(35.99);
 
@@ -126,7 +126,7 @@ class LivroRepositoryTest
     }
 
     @Test
-    void findByAutorAndTitulo()
+    void findByAutorAndTituloTest()
     {
         var autorLivro = autorRepository.findById(UUID.fromString("fc575bc4-a1d3-40cf-b120-4512607de86e"))
                 .orElseThrow(()-> new IllegalArgumentException("esse autor não existe"));
@@ -138,7 +138,7 @@ class LivroRepositoryTest
     }
 
     @Test
-    void findByTituloContainingIgnoreCase()
+    void findByTituloContainingIgnoreCaseTest()
     {
         var livro = livroRepository.findByTituloContainingIgnoreCase("casa");
 
@@ -146,7 +146,7 @@ class LivroRepositoryTest
     }
 
     @Test
-    void listEveryoneByTituloAndPreco()
+    void listEveryoneByTituloAndPrecoTest()
     {
         var livros = livroRepository.listEveryoneByTituloAndPreco();
 
@@ -154,10 +154,18 @@ class LivroRepositoryTest
     }
 
     @Test
-    void findAutorOfLivros()
+    void findAutorOfLivrosTest()
     {
         var autores = livroRepository.findAutorOfLivros();
 
         autores.forEach(System.out::println);
+    }
+
+    @Test
+    void findByGeneroQueryParamTest()
+    {
+        var livros = livroRepository.findByGenero(GeneroLivro.MISTERIO, "preco");
+
+        livros.forEach(System.out::println);
     }
 }
