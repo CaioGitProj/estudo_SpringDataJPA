@@ -168,4 +168,16 @@ class LivroRepositoryTest
 
         livros.forEach(System.out::println);
     }
+
+    @Test
+    void deleteByGeneroLivroTest()
+    {
+        livroRepository.deleteByGeneroLivro(GeneroLivro.BIOGRAFIA);
+    }
+
+    @Test
+    void updateDataPublicacaoTest()
+    {
+        livroRepository.updateDataPublicacao(LocalDate.of(1980,1,1), LocalDate.of(1980,1, 1));
+    }
 }
