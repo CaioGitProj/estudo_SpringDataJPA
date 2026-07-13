@@ -3,6 +3,7 @@ package br.com.caiogit.datajpa.libraryapi.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Table(name = "autor", schema = "public")
 @Data
 @AllArgsConstructor
+@ToString(exclude = "livros")
 public class Autor
 {
     @Id
