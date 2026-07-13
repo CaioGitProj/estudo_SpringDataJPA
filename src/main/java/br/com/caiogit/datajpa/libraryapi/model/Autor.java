@@ -3,7 +3,7 @@ package br.com.caiogit.datajpa.libraryapi.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,6 +13,7 @@ import java.util.UUID;
 @Table(name = "autor", schema = "public")
 @Data
 @AllArgsConstructor
+@ToString(exclude = "livros")
 public class Autor
 {
     @Id
@@ -30,7 +31,7 @@ public class Autor
     @Column(name = "nacionalidade", nullable = false, length = 50)
     private String nacionalidade;
 
-    @OneToMany(mappedBy = "autor")
+    @OneToMany(mappedBy = "autor", cascade = CascadeType.PERSIST)
     private List<Livro> livros;
 
     @Deprecated

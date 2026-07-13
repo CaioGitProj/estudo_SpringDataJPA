@@ -4,6 +4,7 @@ import br.com.caiogit.datajpa.libraryapi.enums.GeneroLivro;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Table(name = "livro")
 @AllArgsConstructor
 @Data
+@ToString(exclude = "autor")
 public class Livro
 {
 
@@ -38,7 +40,7 @@ public class Livro
     private BigDecimal preco;
 
     @JoinColumn(name = "id_autor", nullable = false)
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) //(cascade = CascadeType.ALL)
     private Autor autor;
 
 
