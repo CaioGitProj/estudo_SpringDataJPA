@@ -1,6 +1,8 @@
 package br.com.caiogit.datajpa.libraryapi.controller;
 
 import br.com.caiogit.datajpa.libraryapi.controller.dto.AutorDTO;
+import br.com.caiogit.datajpa.libraryapi.controller.dto.ErrorResposta;
+import br.com.caiogit.datajpa.libraryapi.exceptions.RegistroDuplicadoException;
 import br.com.caiogit.datajpa.libraryapi.model.Autor;
 import br.com.caiogit.datajpa.libraryapi.service.AutorService;
 import org.springframework.http.ResponseEntity;
@@ -25,20 +27,28 @@ public class AutorController
 
 
     @PostMapping
-    public ResponseEntity<Void> salvar(@RequestBody AutorDTO dto)
+    public ResponseEntity<Object> salvar(@RequestBody AutorDTO dto)
     {
-        Autor autor = dto.transformarAutor();
-        autorService.salvarAutor(autor);
+        try {
+            Autor autor = dto.transformarAutor();
+            autorService.salvarAutor(autor);
 
-        //http://localhst:8080/autores/{id}
-        //Caso ele consiga salvar no banco, retorna na url o id do autor criado
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(autor.getId())
-                .toUri();
+            //http://localhst:8080/autores/{id}
+            //Caso ele consiga salvar no banco, retorna na url o id do autor criado
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(autor.getId())
+                    .toUri();
 
-        return ResponseEntity.created(location).build();
+            return ResponseEntity.created(location).build();
+        }
+        catch(RegistroDuplicadoException e) {
+
+            var erroDTO = ErrorResposta.conflito(e.getMessage());
+
+            return ResponseEntity.status(erroDTO.status()).body(erroDTO);
+        }
     }
 
     @GetMapping("/{id}")
@@ -121,5 +131,31 @@ public class AutorController
 
 
         return ResponseEntity.ok(listaRetorno);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> atualizarAutor(@PathVariable("id") String id, @RequestBody AutorDTO dto)
+    {
+        try {
+            var idAutor = UUID.fromString(id);
+            Optional<Autor> autorOptional = autorService.obterAutorPorId(idAutor);
+
+            if (autorOptional.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            var autor = autorOptional.get();
+
+            autor.setNome(dto.nome());
+            autor.setNacionalidade(dto.nacionalidade());
+            autor.setDataNascimento(dto.dataNascimento());
+
+            autorService.atualizar(autor);
+        }
+        catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.noContent().build();
     }
 }

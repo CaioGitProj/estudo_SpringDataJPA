@@ -2,6 +2,7 @@ package br.com.caiogit.datajpa.libraryapi.service;
 
 import br.com.caiogit.datajpa.libraryapi.model.Autor;
 import br.com.caiogit.datajpa.libraryapi.repository.AutorRepository;
+import br.com.caiogit.datajpa.libraryapi.validator.AutorValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,16 +14,29 @@ public class AutorService
 {
 
     private final AutorRepository autorRepository;
+    private final AutorValidator validator;
 
-    public AutorService(AutorRepository autorRepository)
+    public AutorService(AutorRepository autorRepository, AutorValidator validator)
     {
         this.autorRepository = autorRepository;
+        this.validator = validator;
     }
 
 
     public Autor salvarAutor(Autor autor)
     {
+        validator.validar(autor);
         return autorRepository.save(autor);
+    }
+
+    public void atualizar(Autor autor)
+    {
+        if(autor.getId() == null)
+        {
+            throw new IllegalArgumentException("Para atualizar, é necessário que o autor exista");
+        }
+        validator.validar(autor);
+        autorRepository.save(autor);
     }
 
     public Optional<Autor> obterAutorPorId(UUID id)
