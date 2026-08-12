@@ -2,9 +2,11 @@ package br.com.caiogit.datajpa.libraryapi.controller;
 
 import br.com.caiogit.datajpa.libraryapi.controller.dto.AutorDTO;
 import br.com.caiogit.datajpa.libraryapi.controller.dto.ErrorResposta;
+import br.com.caiogit.datajpa.libraryapi.exceptions.OperacaoNaoPermitidaException;
 import br.com.caiogit.datajpa.libraryapi.exceptions.RegistroDuplicadoException;
 import br.com.caiogit.datajpa.libraryapi.model.Autor;
 import br.com.caiogit.datajpa.libraryapi.service.AutorService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -16,14 +18,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/autores") //http://localhst:8080/autores
+@RequiredArgsConstructor
 public class AutorController
 {
-
     private final AutorService autorService;
-
-    public AutorController(AutorService autorService) {
-        this.autorService = autorService;
-    }
 
 
     @PostMapping
@@ -40,6 +38,7 @@ public class AutorController
                     .path("/{id}")
                     .buildAndExpand(autor.getId())
                     .toUri();
+
 
             return ResponseEntity.created(location).build();
         }
@@ -84,31 +83,27 @@ public class AutorController
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarAutor(@PathVariable("id") String id)
+    public ResponseEntity<Object> deletarAutor(@PathVariable("id") String id)
     {
-
-        try
-        {
+        try {
             var idAutor = UUID.fromString(id);
-            if(autorService.obterAutorPorId(idAutor).isPresent())
-            {
-                Optional<Autor> autorOptional = autorService.obterAutorPorId(idAutor);
+            Optional<Autor> autorOptional = autorService.obterAutorPorId(idAutor);
 
-                autorService.deletarAutor(autorOptional.get());
-            }
-            else
+            if(autorOptional.isEmpty())
             {
                 return ResponseEntity.notFound().build();
             }
 
+            autorService.deletarAutor(autorOptional.get());
+
+            return ResponseEntity.noContent().build();
         }
-        catch(IllegalArgumentException e)
+        catch(OperacaoNaoPermitidaException e)
         {
-            return ResponseEntity.badRequest().build();
+            var erroResposta = ErrorResposta.respostaPadrao(e.getMessage());
+
+            return ResponseEntity.status(erroResposta.status()).body(erroResposta);
         }
-
-        return ResponseEntity.noContent().build();
-
     }
 
     @GetMapping("")
@@ -134,7 +129,7 @@ public class AutorController
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> atualizarAutor(@PathVariable("id") String id, @RequestBody AutorDTO dto)
+    public ResponseEntity<Object> atualizarAutor(@PathVariable("id") String id, @RequestBody AutorDTO dto)
     {
         try {
             var idAutor = UUID.fromString(id);
@@ -151,11 +146,13 @@ public class AutorController
             autor.setDataNascimento(dto.dataNascimento());
 
             autorService.atualizar(autor);
-        }
-        catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
 
-        return ResponseEntity.noContent().build();
+            return ResponseEntity.noContent().build();
+        }
+        catch (RegistroDuplicadoException e) {
+            var erroDTO = ErrorResposta.conflito(e.getMessage());
+
+            return ResponseEntity.status(erroDTO.status()).body(erroDTO);
+        }
     }
 }
