@@ -1,4 +1,4 @@
-package br.com.caiogit.datajpa.libraryapi.controller.dto;
+package br.com.caiogit.datajpa.libraryapi.controller.dto.error;
 
 import org.springframework.http.HttpStatus;
 
