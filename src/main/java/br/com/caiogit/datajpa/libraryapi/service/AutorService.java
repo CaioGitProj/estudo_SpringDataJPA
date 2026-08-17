@@ -6,6 +6,8 @@ import br.com.caiogit.datajpa.libraryapi.repository.AutorRepository;
 import br.com.caiogit.datajpa.libraryapi.repository.LivroRepository;
 import br.com.caiogit.datajpa.libraryapi.validator.AutorValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -73,5 +75,25 @@ public class AutorService
 
         return autorRepository.findAll();
 
+    }
+
+    public List<Autor> pesquisarAutorByExample(String nome, String nacionalidade)
+    {
+        var autor = new Autor();
+        autor.setNome(nome);
+        autor.setNacionalidade(nacionalidade);
+
+
+        ExampleMatcher matcher = ExampleMatcher
+                .matching()
+                .withIgnorePaths("id", "dataNascimento", "dataCadastro", "dataAtualizacao", "livros", "idUsuario")
+                .withIgnoreNullValues()
+                .withIgnoreCase()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING); //Procura o nome que contém certa String
+
+        Example<Autor> autorExample = Example.of(autor);
+
+
+        return autorRepository.findAll(autorExample);
     }
 }
