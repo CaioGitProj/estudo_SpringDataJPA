@@ -1,11 +1,12 @@
 package br.com.caiogit.datajpa.libraryapi.controller;
 
 import br.com.caiogit.datajpa.libraryapi.controller.dto.AutorDTO;
-import br.com.caiogit.datajpa.libraryapi.controller.dto.ErrorResposta;
+import br.com.caiogit.datajpa.libraryapi.controller.dto.error.ErrorResposta;
 import br.com.caiogit.datajpa.libraryapi.exceptions.OperacaoNaoPermitidaException;
 import br.com.caiogit.datajpa.libraryapi.exceptions.RegistroDuplicadoException;
 import br.com.caiogit.datajpa.libraryapi.model.Autor;
 import br.com.caiogit.datajpa.libraryapi.service.AutorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class AutorController
 
 
     @PostMapping
-    public ResponseEntity<Object> salvar(@RequestBody AutorDTO dto)
+    public ResponseEntity<Object> salvar(@RequestBody @Valid AutorDTO dto)
     {
         try {
             Autor autor = dto.transformarAutor();
@@ -112,7 +113,7 @@ public class AutorController
             @RequestParam(value ="nacionalidade", required = false) String nacionalidade)
     {
 
-        List<Autor> resultadoAutor = autorService.pesquisarAutor(nome, nacionalidade);
+        List<Autor> resultadoAutor = autorService.pesquisarAutorByExample(nome, nacionalidade);
 
         List<AutorDTO> listaRetorno = resultadoAutor
                 .stream()
