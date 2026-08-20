@@ -1,7 +1,6 @@
 package br.com.caiogit.datajpa.libraryapi.controller.dto;
 
 
-import br.com.caiogit.datajpa.libraryapi.model.Autor;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
@@ -23,16 +22,5 @@ public record AutorDTO(
 
         @NotBlank(message = "Campo obrigatório")
         @Size(min = 2,max = 100, message = "Campo fora do tamanho padrão")
-        String nacionalidade)
-{
-    public Autor transformarAutor()
-    {
-        Autor autor = new Autor();
-
-        autor.setDataNascimento(this.dataNascimento());
-        autor.setNacionalidade(this.nacionalidade());
-        autor.setNome(this.nome());
-
-        return autor;
-    }
+        String nacionalidade) {
 }
