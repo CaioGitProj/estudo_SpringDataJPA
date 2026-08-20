@@ -2,7 +2,9 @@ package br.com.caiogit.datajpa.libraryapi.controller;
 
 import br.com.caiogit.datajpa.libraryapi.controller.dto.CadastroLivroDTO;
 import br.com.caiogit.datajpa.libraryapi.controller.dto.error.ErrorResposta;
+import br.com.caiogit.datajpa.libraryapi.controller.dto.mappers.LivroMapper;
 import br.com.caiogit.datajpa.libraryapi.exceptions.RegistroDuplicadoException;
+import br.com.caiogit.datajpa.libraryapi.model.Livro;
 import br.com.caiogit.datajpa.libraryapi.service.LivroService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,22 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("livros")
 @RequiredArgsConstructor
-public class LivroController
-{
+public class LivroController implements GenericController {
+
     private final LivroService livroService;
+    private final LivroMapper mapper;
 
     @PostMapping
-    public ResponseEntity<Object> salvarLivro(@RequestBody @Valid CadastroLivroDTO dto)
-    {
-        try
-        {
-            return ResponseEntity.ok(dto);
-        }
-        catch (RegistroDuplicadoException e)
-        {
-            var erroDTO = ErrorResposta.conflito(e.getMessage());
+    public ResponseEntity<Object> salvarLivro(@RequestBody @Valid CadastroLivroDTO dto) {
+        Livro livro = mapper.toEntity(dto);
 
-            return ResponseEntity.status(erroDTO.status()).body(erroDTO);
-        }
+        livroService.salvarLivro(livro);
+
+        var url = gerarHeaderLocation(livro.getId());
+        return ResponseEntity.created(url).build();
     }
 }
