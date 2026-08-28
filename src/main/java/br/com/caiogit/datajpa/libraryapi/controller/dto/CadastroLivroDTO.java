@@ -25,7 +25,7 @@ public record CadastroLivroDTO(
                                @Past
                                LocalDate dataPublicacao,
 
-                               GeneroLivro genero,
+                               GeneroLivro generoLivro,
                                BigDecimal preco
 ) {
 }
