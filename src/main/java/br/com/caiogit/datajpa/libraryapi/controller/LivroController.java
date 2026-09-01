@@ -44,6 +44,22 @@ public class LivroController implements GenericController {
         }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping
+    public ResponseEntity<List<ResultadoPesquisaLivroDTO>> pesquisaLivroSpec(
+            @RequestParam(value = "isbn", required = false) String isbn,
+            @RequestParam(value = "titulo", required = false) String titulo,
+            @RequestParam(value = "nome-autor",required = false) String nomeAutor,
+            @RequestParam(value = "genero", required = false)GeneroLivro genero,
+            @RequestParam(value = "ano-publicacao", required = false) Integer anoPublicacao
+    )
+    {
+        var resultadoPesquisa = livroService.pesquisarLivro(isbn, titulo,nomeAutor,genero,anoPublicacao);
+
+        var lista = resultadoPesquisa.stream().map(mapper::toDTO).toList();
+
+        return ResponseEntity.ok(lista);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarLivro( @PathVariable("id") String id)
     {
@@ -55,19 +71,34 @@ public class LivroController implements GenericController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping
-    public ResponseEntity<List<ResultadoPesquisaLivroDTO>> pesquisaLivroSpec(
-            @RequestParam(value = "isbn", required = false) String isbn,
-            @RequestParam(value = "titulo", required = false) String titulo,
-            @RequestParam(value = "nome-autor",required = false) String nomeAutor,
-            @RequestParam(value = "genero", required = false)GeneroLivro genero,
-            @RequestParam(value = "ano-publicacao", required = false) Integer anoPublicacao
-            )
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> atualizarLivro(@PathVariable("id") String id, @RequestBody @Valid CadastroLivroDTO dto)
     {
-        var resultadoPesquisa = livroService.pesquisarLivro(isbn, titulo,nomeAutor,genero,anoPublicacao);
+        return livroService
+                .obterLivroPorId(UUID.fromString(id))
+                .map(livro -> {
 
-        var lista = resultadoPesquisa.stream().map(mapper::toDTO).toList();
+                    Livro entityAux = mapper.toEntity(dto);
 
-        return ResponseEntity.ok(lista);
+                    livro.setDataPublicacao(entityAux.getDataPublicacao());
+                    livro.setIsbn(entityAux.getIsbn());
+
+                    if(entityAux.getPreco() != null)
+                    {
+                        livro.setPreco(entityAux.getPreco());
+                    }
+                    if(entityAux.getGeneroLivro() != null)
+                    {
+                        livro.setGeneroLivro(entityAux.getGeneroLivro());
+                    }
+
+                    livro.setTitulo(entityAux.getTitulo());
+                    livro.setAutor(entityAux.getAutor());
+
+                    livroService.atualizarLivro(livro);
+
+                    return ResponseEntity.noContent().build();
+
+                }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
