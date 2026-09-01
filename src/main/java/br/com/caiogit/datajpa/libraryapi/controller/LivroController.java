@@ -9,6 +9,7 @@ import br.com.caiogit.datajpa.libraryapi.service.LivroService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,19 +46,22 @@ public class LivroController implements GenericController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ResultadoPesquisaLivroDTO>> pesquisaLivroSpec(
+    public ResponseEntity<Page<ResultadoPesquisaLivroDTO>> pesquisaLivroSpec(
             @RequestParam(value = "isbn", required = false) String isbn,
             @RequestParam(value = "titulo", required = false) String titulo,
             @RequestParam(value = "nome-autor",required = false) String nomeAutor,
             @RequestParam(value = "genero", required = false)GeneroLivro genero,
-            @RequestParam(value = "ano-publicacao", required = false) Integer anoPublicacao
+            @RequestParam(value = "ano-publicacao", required = false) Integer anoPublicacao,
+            @RequestParam(value = "pagina", defaultValue = "0") Integer pagina,
+            @RequestParam(value = "tamanho-pagina", defaultValue = "10") Integer tamanhoPagina
     )
     {
-        var resultadoPesquisa = livroService.pesquisarLivro(isbn, titulo,nomeAutor,genero,anoPublicacao);
+        var paginaResultado = livroService.pesquisarLivro(isbn, titulo,
+                nomeAutor, genero, anoPublicacao, pagina, tamanhoPagina);
 
-        var lista = resultadoPesquisa.stream().map(mapper::toDTO).toList();
+        Page<ResultadoPesquisaLivroDTO> resultado = paginaResultado.map(mapper::toDTO);
 
-        return ResponseEntity.ok(lista);
+        return ResponseEntity.ok(resultado);
     }
 
     @DeleteMapping("/{id}")

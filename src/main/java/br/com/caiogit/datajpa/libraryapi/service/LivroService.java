@@ -6,6 +6,10 @@ import br.com.caiogit.datajpa.libraryapi.model.Livro;
 import br.com.caiogit.datajpa.libraryapi.repository.LivroRepository;
 import br.com.caiogit.datajpa.libraryapi.validator.LivroValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +43,13 @@ public class LivroService
         livroRepository.delete(livro);
     }
 
-    public List<Livro> pesquisarLivro(String isbn, String titulo, String nomeAutor, GeneroLivro genero, Integer anoPublicacao)
+    public Page<Livro> pesquisarLivro(String isbn,
+                                      String titulo,
+                                      String nomeAutor,
+                                      GeneroLivro genero,
+                                      Integer anoPublicacao,
+                                      Integer pagina,
+                                      Integer tamanhoPagina)
     {
         // select * from livro where isbn = :isbn and nomeAutor = :nomeAutor
         // conjunction é um where que sempre vai dar positivo( 0 = 0)
@@ -63,7 +73,10 @@ public class LivroService
         if(nomeAutor != null) {
             specs = specs.and(nomeAutorLike(nomeAutor));
         }
-        return livroRepository.findAll(specs);
+
+        Pageable pageRequest = PageRequest.of(pagina, tamanhoPagina);
+
+        return livroRepository.findAll(specs, pageRequest);
     }
 
     public void atualizarLivro(Livro livro)
