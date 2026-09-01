@@ -3,6 +3,7 @@ package br.com.caiogit.datajpa.libraryapi.controller.common;
 
 import br.com.caiogit.datajpa.libraryapi.controller.dto.error.ErrorCampo;
 import br.com.caiogit.datajpa.libraryapi.controller.dto.error.ErrorResposta;
+import br.com.caiogit.datajpa.libraryapi.exceptions.CampoInvalidoException;
 import br.com.caiogit.datajpa.libraryapi.exceptions.OperacaoNaoPermitidaException;
 import br.com.caiogit.datajpa.libraryapi.exceptions.RegistroDuplicadoException;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,16 @@ public class GlobalExceptionHandler
     public ErrorResposta handleRegistroDuplicadoException(RegistroDuplicadoException e)
     {
         return ErrorResposta.conflito(e.getMessage());
+    }
+
+
+    @ExceptionHandler(CampoInvalidoException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
+    public ErrorResposta handleCampoInvalidoException(CampoInvalidoException e)
+    {
+        return new ErrorResposta( HttpStatus.UNPROCESSABLE_CONTENT.value(),
+                "Erro de validação.",
+                List.of(new ErrorCampo(e.getCampo(), e.getMessage())));
     }
 
     @ExceptionHandler(OperacaoNaoPermitidaException.class)
