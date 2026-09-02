@@ -1,4 +1,4 @@
-package br.com.caiogit.datajpa.libraryapi.controller;
+package br.com.caiogit.datajpa.libraryapi.controller.restController;
 
 import br.com.caiogit.datajpa.libraryapi.controller.dto.AutorDTO;
 import br.com.caiogit.datajpa.libraryapi.controller.dto.mappers.AutorMapper;
