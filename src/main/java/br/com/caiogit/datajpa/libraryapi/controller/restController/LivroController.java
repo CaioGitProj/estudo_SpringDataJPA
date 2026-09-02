@@ -1,4 +1,4 @@
-package br.com.caiogit.datajpa.libraryapi.controller;
+package br.com.caiogit.datajpa.libraryapi.controller.restController;
 
 import br.com.caiogit.datajpa.libraryapi.controller.dto.CadastroLivroDTO;
 import br.com.caiogit.datajpa.libraryapi.controller.dto.ResultadoPesquisaLivroDTO;
@@ -8,12 +8,10 @@ import br.com.caiogit.datajpa.libraryapi.model.Livro;
 import br.com.caiogit.datajpa.libraryapi.service.LivroService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController

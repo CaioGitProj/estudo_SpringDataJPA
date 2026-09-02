@@ -5,9 +5,13 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -15,6 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Data
 @ToString(exclude = "autor")
+@EntityListeners(AuditingEntityListener.class)
 public class Livro
 {
 
@@ -38,6 +43,17 @@ public class Livro
 
     @Column(name = "preco", precision = 18, scale = 2)
     private BigDecimal preco;
+
+    @CreatedDate
+    @Column(name = "data_cadastro")
+    private LocalDateTime dataCadastro;
+
+    @LastModifiedDate
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao;
+
+    @Column(name = "id_usuario")
+    private UUID idUsuario;
 
     @JoinColumn(name = "id_autor", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY) //(cascade = CascadeType.ALL)

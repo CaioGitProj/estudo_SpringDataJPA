@@ -1,4 +1,4 @@
-package br.com.caiogit.datajpa.libraryapi.controller;
+package br.com.caiogit.datajpa.libraryapi.controller.restController;
 
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
