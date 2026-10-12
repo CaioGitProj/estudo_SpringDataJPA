@@ -3,7 +3,9 @@ package br.com.caiogit.datajpa.libraryapi.service;
 
 import br.com.caiogit.datajpa.libraryapi.enums.GeneroLivro;
 import br.com.caiogit.datajpa.libraryapi.model.Livro;
+import br.com.caiogit.datajpa.libraryapi.model.Usuario;
 import br.com.caiogit.datajpa.libraryapi.repository.LivroRepository;
+import br.com.caiogit.datajpa.libraryapi.security.SecurityService;
 import br.com.caiogit.datajpa.libraryapi.validator.LivroValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,10 +28,14 @@ public class LivroService
 {
     private final LivroRepository livroRepository;
     private final LivroValidator livroValidator;
+    private final SecurityService securityService;
 
     public void salvarLivro(Livro livro)
     {
         livroValidator.validarLivro(livro);
+        Usuario usuario = securityService.obterUsuarioLogado();
+        livro.setUsuario(usuario);
+
         livroRepository.save(livro);
     }
 

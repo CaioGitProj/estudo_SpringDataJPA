@@ -2,8 +2,10 @@ package br.com.caiogit.datajpa.libraryapi.service;
 
 import br.com.caiogit.datajpa.libraryapi.exceptions.OperacaoNaoPermitidaException;
 import br.com.caiogit.datajpa.libraryapi.model.Autor;
+import br.com.caiogit.datajpa.libraryapi.model.Usuario;
 import br.com.caiogit.datajpa.libraryapi.repository.AutorRepository;
 import br.com.caiogit.datajpa.libraryapi.repository.LivroRepository;
+import br.com.caiogit.datajpa.libraryapi.security.SecurityService;
 import br.com.caiogit.datajpa.libraryapi.validator.AutorValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -21,12 +23,16 @@ public class AutorService
 
     private final AutorRepository autorRepository;
     private final LivroRepository livroRepository;
+    private final SecurityService securityService;
     private final AutorValidator validator;
 
 
     public Autor salvarAutor(Autor autor)
     {
         validator.validar(autor);
+        Usuario usuario = securityService.obterUsuarioLogado();
+        autor.setUsuario(usuario);
+
         return autorRepository.save(autor);
     }
 
