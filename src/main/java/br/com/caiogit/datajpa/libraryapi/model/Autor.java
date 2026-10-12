@@ -44,8 +44,9 @@ public class Autor
     @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
 
-    @Column(name = "id_usuario")
-    private UUID idUsuario;
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 
     @OneToMany(mappedBy = "autor", cascade = CascadeType.PERSIST)
     private List<Livro> livros;

@@ -52,8 +52,9 @@ public class Livro
     @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
 
-    @Column(name = "id_usuario")
-    private UUID idUsuario;
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 
     @JoinColumn(name = "id_autor", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY) //(cascade = CascadeType.ALL)
