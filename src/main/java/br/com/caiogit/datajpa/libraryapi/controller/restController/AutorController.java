@@ -4,9 +4,12 @@ import br.com.caiogit.datajpa.libraryapi.controller.dto.AutorDTO;
 import br.com.caiogit.datajpa.libraryapi.controller.dto.mappers.AutorMapper;
 import br.com.caiogit.datajpa.libraryapi.model.Autor;
 import br.com.caiogit.datajpa.libraryapi.service.AutorService;
+import br.com.caiogit.datajpa.libraryapi.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -19,11 +22,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AutorController implements GenericController {
     private final AutorService autorService;
+    private final UsuarioService usuarioService;
     private final AutorMapper mapper;
 
 
     @PostMapping
-    public ResponseEntity<Void> salvar(@RequestBody @Valid AutorDTO dto) {
+    @PreAuthorize("hasRole('GERENTE')")
+    public ResponseEntity<Void> salvar(@RequestBody @Valid AutorDTO dto, Authentication authentication) {
+
         Autor autor = mapper.toEntity(dto);
         autorService.salvarAutor(autor);
 
@@ -33,6 +39,7 @@ public class AutorController implements GenericController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('OPERADOR', 'GERENTE')")
     public ResponseEntity<AutorDTO> obterDetalhesAutor(@PathVariable("id") String id) {
         var idAutor = UUID.fromString(id);
 
@@ -44,6 +51,7 @@ public class AutorController implements GenericController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Void> deletarAutor(@PathVariable("id") String id) {
         var idAutor = UUID.fromString(id);
         Optional<Autor> autorOptional = autorService.obterAutorPorId(idAutor);
@@ -59,6 +67,7 @@ public class AutorController implements GenericController {
     }
 
     @GetMapping("")
+    @PreAuthorize("hasRole('OPERADOR', 'GERENTE')")
     public ResponseEntity<List<AutorDTO>> pesquisarAutores(
             @RequestParam(value = "nome", required = false) String nome,
             @RequestParam(value = "nacionalidade", required = false) String nacionalidade) {
@@ -75,6 +84,7 @@ public class AutorController implements GenericController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Void> atualizarAutor(@PathVariable("id") String id, @RequestBody AutorDTO dto) {
         var idAutor = UUID.fromString(id);
         Optional<Autor> autorOptional = autorService.obterAutorPorId(idAutor);
