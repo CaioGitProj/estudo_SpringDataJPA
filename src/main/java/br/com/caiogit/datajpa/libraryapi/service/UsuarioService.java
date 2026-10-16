@@ -28,4 +28,9 @@ public class UsuarioService
         return usuarioRepository.findByLogin(login);
     }
 
+    public Usuario obterUsuarioPorEmail(String email)
+    {
+        return usuarioRepository.findByEmail(email);
+    }
+
 }
