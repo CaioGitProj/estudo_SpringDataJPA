@@ -9,7 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Getter
@@ -36,13 +35,13 @@ public class CustomAuthentication implements Authentication
     @Override
     public @Nullable Object getDetails()
     {
-        return this.usuario;
+        return null;
     }
 
     @Override
     public @Nullable Object getPrincipal()
     {
-        return null;
+        return this.usuario;
     }
 
     @Override
