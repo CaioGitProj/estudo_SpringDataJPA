@@ -3,9 +3,9 @@ spring:
     name: libraryapi
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/library
-    username: postgres
-    password: "6ty_ei|Au5001"
+    url: ${URL_DATABASE}
+    username: ${USERNAME_DATABASE}
+    password: ${PASSWORD_DATABASE}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -15,3 +15,11 @@ spring:
       ddl-auto: none
     properties:
       hibernate.format_sql: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}

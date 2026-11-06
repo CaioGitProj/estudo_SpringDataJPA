@@ -34,5 +34,6 @@ build/
 
 
 ### Configurations ##
-*.yml
+*.yaml
 *.txt
+*.env

@@ -1,6 +1,7 @@
 package br.com.caiogit.datajpa.libraryapi.config;
 
 import br.com.caiogit.datajpa.libraryapi.security.CustomUserDetailsService;
+import br.com.caiogit.datajpa.libraryapi.security.LoginSocialSuccessHandler;
 import br.com.caiogit.datajpa.libraryapi.service.UsuarioService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,14 +27,15 @@ public class SecurityConfiguration
     //Pesquisar sobre Authorits, já que o curso não explicou(até agora)
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler successHandler) throws Exception
     {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                //.formLogin(configurer -> configurer.loginPage("/login.html").successForwardUrl("/home.html"))
-                //.formLogin(configurer -> configurer.loginPage("/login"))
-                .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
+                //.formLogin(configurer -> configurer.loginPage("/login.html").successForwardUrl("/home.html"))
+                .formLogin(configurer -> {
+                    configurer.loginPage("/login");
+                })
                 .authorizeHttpRequests(authorize -> {
 
                     authorize.requestMatchers("/login").permitAll();
@@ -42,7 +44,12 @@ public class SecurityConfiguration
 
                     authorize.anyRequest().authenticated();
                 })
-                .oauth2Login(Customizer.withDefaults())
+                .oauth2Login(oauth2 -> {
+
+                    oauth2
+                            .loginPage("/login")
+                            .successHandler(successHandler);
+                })
                 .build();
     }
 

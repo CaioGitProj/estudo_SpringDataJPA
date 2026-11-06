@@ -7,6 +7,7 @@ import br.com.caiogit.datajpa.libraryapi.exceptions.CampoInvalidoException;
 import br.com.caiogit.datajpa.libraryapi.exceptions.OperacaoNaoPermitidaException;
 import br.com.caiogit.datajpa.libraryapi.exceptions.RegistroDuplicadoException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -53,6 +54,13 @@ public class GlobalExceptionHandler
     public ErrorResposta handleOperacaoNaoPermitidaException(OperacaoNaoPermitidaException e)
     {
         return ErrorResposta.respostaPadrao(e.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResposta handleAccesDeniedException(AccessDeniedException e)
+    {
+        return new ErrorResposta(HttpStatus.FORBIDDEN.value(), "Acesso negado", List.of());
     }
 
     @ExceptionHandler(RuntimeException.class)

@@ -35,7 +35,7 @@ class LivroRepositoryTest
         livro.setDataPublicacao(LocalDate.of(1980,1,2));
 
         var autorLivro = autorRepository
-                .findById(UUID.fromString("1dfd86d7-e5e3-45e6-aced-49a4d69ecd33"))
+                .findById(UUID.fromString("fbdc742f-761d-429f-870a-5290c04b32b4"))
                 .orElseThrow(() -> new IllegalArgumentException("Autor não existe"));
 
 
